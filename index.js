@@ -1,7 +1,10 @@
 const express = require('express')
+const morgan = require('morgan') // Morgan Logger
 const app = express()
 
 app.use(express.json()) // add New Persons: HTTP POST requests
+
+app.use(morgan('tiny')) // Morgan Logger
 
 let persons = [
     {
