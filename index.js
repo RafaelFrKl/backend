@@ -1,10 +1,11 @@
 const express = require('express')
 const morgan = require('morgan') // Morgan Logger
 const app = express()
+const cors = require('cors')
 
 app.use(express.json()) // add New Persons: HTTP POST requests
-
 app.use(morgan('tiny')) // Morgan Logger
+app.use(cors())
 
 let persons = [
     {
