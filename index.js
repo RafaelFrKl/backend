@@ -32,8 +32,13 @@ app.get('/api/persons', (request, response) => {
 })
 
 // Info Page
+const date = new Date();
+
 app.get('/info', (request, response) => {
-    response.send('<h1>Hello World!</h1>')
+    response.send(`
+        <h3>Phonebook has info for ${persons.length} people</h3>
+        <h3>${date}</h3>
+    `)  
 })
 
 // Fetch an individual resource
