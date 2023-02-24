@@ -15,8 +15,16 @@ mongoose.connect(url)
     })
 
 const personSchema = new mongoose.Schema({
-    name: String,
-    number: String,
+    // Content schema and validation criteria
+    name: { 
+        type: String,
+        minLength: 3,
+        required: true
+    },
+    number: {
+        type: String,
+        required: true
+    },
 })
 
 personSchema.set('toJSON', {
