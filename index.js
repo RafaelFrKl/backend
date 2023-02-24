@@ -1,14 +1,16 @@
+require('dotenv').config() //used for sensitive info
 const express = require('express')
 const morgan = require('morgan') // Morgan Logger
 const app = express()
 const cors = require('cors')
+const Person = require('./models/person') //MongoDB Model
 
 app.use(express.json()) // add New Persons: HTTP POST requests
 app.use(morgan('tiny')) // Morgan Logger
 app.use(cors())
 app.use(express.static('build')) // Use Build
 
-let persons = [
+/*let persons = [
     {
         id: 1,
         name: "Arto Hellas",
@@ -29,11 +31,13 @@ let persons = [
         name: "Mary Poppendieck",
         number: "39-23-6423122"
     }
-]
+]*/
 
 // Display all Persons
 app.get('/api/persons', (request, response) => {
-    response.json(persons)
+    Person.find({}).then(persons => {
+        response.json(persons)
+    })
 })
 
 // Info Page
@@ -48,15 +52,9 @@ app.get('/info', (request, response) => {
 
 // Fetch an individual resource
 app.get('/api/persons/:id', (request, response) => {
-    const id = Number(request.params.id)
-    //console.log(id)
-    const person = persons.find(person => person.id === id)
-    //console.log(person)
-    if (person) {
+    Person.findById(request.params.id).then(person => {
         response.json(person)
-    } else {
-        response.status(404).end()
-    }
+    })
 })
 
 // Deletion Route
@@ -67,11 +65,7 @@ app.delete('/api/persons/:id', (request, response) => {
     response.status(204).end()
 })
 
-// New Persons
-const generateId = () => { //Give a new ID
-    return Math.floor(Math.random() * 10000);
-}
-
+// Create New Person
 app.post('/api/persons', (request, response) => {
     const body = request.body
 
@@ -83,21 +77,15 @@ app.post('/api/persons', (request, response) => {
         return response.status(400).json({
             error: 'number missing'
         })
-    } else if (persons.find(person => person.name === body.name)){
-        return response.status(400).json({
-            error: 'name must be unique' 
-        })
-    }
-
-    const person = {
+    } 
+    const person = new Person({
         name: body.name,
-        number: body.number,
-        id: generateId(),
-    }
+        number: body.number || false,
+    })
 
-    persons = persons.concat(person)
-
-    response.json(person)
+    person.save().then(savedPerson => {
+        response.json(savedPerson)
+    })
 })
 
 // Middelware function for catching requests made to non-existent routes
@@ -106,7 +94,7 @@ const unknownEndpoint = (request, response) => {
 }
 app.use(unknownEndpoint)
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
 })
