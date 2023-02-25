@@ -38,7 +38,7 @@ app.use(cors())
 const date = new Date()
 
 app.get('/info', (request, response) => {
-	response.send(`
+    response.send(`
         <h3>Phonebook has info for ${Person.length} people</h3>
         <h3>${date}</h3>
     `)
@@ -46,85 +46,85 @@ app.get('/info', (request, response) => {
 
 // Get all Persons
 app.get('/api/persons', (request, response) => {
-	Person.find({}).then(persons => {
-		response.json(persons)
-	})
+    Person.find({}).then(persons => {
+        response.json(persons)
+    })
 })
 
 // Fetch an individual Person
 app.get('/api/persons/:id', (request, response, next) => {
-	Person.findById(request.params.id)
-		.then(person => {
-			if (person) {
-				response.json(person)
-			} else {
-				response.status(404).end()
-			}
-		})
-		.catch(error => next(error))
+    Person.findById(request.params.id)
+        .then(person => {
+            if (person) {
+                response.json(person)
+            } else {
+                response.status(404).end()
+            }
+        })
+        .catch(error => next(error))
 })
 
 // Create New Person
 app.post('/api/persons', (request, response, next) => {
-	const body = request.body
+    const body = request.body
 
-	const person = new Person({
-		name: body.name,
-		number: body.number,
-	})
+    const person = new Person({
+        name: body.name,
+        number: body.number,
+    })
 
-	person.save().then(savedPerson => {
-		response.json(savedPerson)
-	})
-		.catch(error => next(error))
+    person.save().then(savedPerson => {
+        response.json(savedPerson)
+    })
+        .catch(error => next(error))
 })
 
 // Update Person
 app.put('/api/persons/:id', (request, response, next) => {
-	const { name, number } = request.body
+    const { name, number } = request.body
 
-	Person.findByIdAndUpdate(
-		request.params.id,
-		{ name, number },
-		{ new: true, runValidators: true, context: 'query' }
-	)
-		.then(updatedPerson => {
-			response.json(updatedPerson)
-		})
-		.catch(error => next(error))
+    Person.findByIdAndUpdate(
+        request.params.id,
+        { name, number },
+        { new: true, runValidators: true, context: 'query' }
+    )
+        .then(updatedPerson => {
+            response.json(updatedPerson)
+        })
+        .catch(error => next(error))
 })
 
 // Delete Person
 app.delete('/api/persons/:id', (request, response, next) => {
-	Person.findByIdAndRemove(request.params.id)
-		.then(result => {
-			response.status(204).end()
-			console.log(result)
-		})
-		.catch(error => next(error))
+    Person.findByIdAndRemove(request.params.id)
+        .then(result => {
+            response.status(204).end()
+            console.log(result)
+        })
+        .catch(error => next(error))
 })
 
 // Middelware function for catching requests made to non-existent routes
 const unknownEndpoint = (request, response) => {
-	response.status(404).send({ error: 'unknown endpoint' })
+    response.status(404).send({ error: 'unknown endpoint' })
 }
 // Handler of requests with unknown endpoint
 app.use(unknownEndpoint)
 
 const errorHandler = (error, request, response, next) => {
-	console.error(error.message)
+    console.error(error.message)
 
-	if (error.name === 'CastError') {
-		return response.status(400).send({ error: 'malformatted id' })
-	} else if (error.name === 'ValidationError') {
-		return response.status(400).json({ error: error.message })
-	}
-	next(error)
+    if (error.name === 'CastError') {
+        return response.status(400).send({ error: 'malformatted id' })
+    } else if (error.name === 'ValidationError') {
+        return response.status(400).json({ error: error.message })
+    }
+    next(error)
 }
 // Handler of requests with result to errors
 app.use(errorHandler)
 
 const PORT = process.env.PORT
 app.listen(PORT, () => {
-	console.log(`Server running on port ${PORT}`)
+    console.log(`Server running on port ${PORT}`)
 })
