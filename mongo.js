@@ -42,9 +42,9 @@ if (process.argv.length === 3) {
 } if (process.argv.length > 3) {
 	// Save New Note
 	person.save().then(result => {
-		console.log(`added ${inputName}'s number ${inputNumber} to phonebook`)
+		console.log(`added ${inputName}'s number ${inputNumber} to phonebook`, result)
 		mongoose.connection.close()
-	})  
+	})
 }
 
 // Restrict search to only include important notes

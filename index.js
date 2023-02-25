@@ -41,7 +41,7 @@ app.get('/info', (request, response) => {
 	response.send(`
         <h3>Phonebook has info for ${Person.length} people</h3>
         <h3>${date}</h3>
-    `)  
+    `)
 })
 
 // Get all Persons
@@ -99,6 +99,7 @@ app.delete('/api/persons/:id', (request, response, next) => {
 	Person.findByIdAndRemove(request.params.id)
 		.then(result => {
 			response.status(204).end()
+			console.log(result)
 		})
 		.catch(error => next(error))
 })
